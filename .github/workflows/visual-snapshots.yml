@@ -1,0 +1,74 @@
+name: Visual Snapshots
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "Packages/awaketh-web/**"
+      - ".github/workflows/visual-snapshots.yml"
+  pull_request:
+    paths:
+      - "Packages/awaketh-web/**"
+      - ".github/workflows/visual-snapshots.yml"
+
+# Cancel superseded runs on the same ref.
+concurrency:
+  group: visual-snapshots-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: Packages/awaketh-web
+
+env:
+  # Directory the Playwright capture writes to and sentry-cli uploads from.
+  SNAPSHOT_OUTPUT_DIR: snapshots
+
+jobs:
+  visual:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Install Playwright browser
+        run: bunx playwright install --with-deps chromium
+
+      - name: Build app
+        run: bun run build
+
+      - name: Capture screenshots
+        run: bun run snapshots
+
+      # Sentry diffs a PR against its merge base. On push to main no base is set,
+      # which establishes/advances the baseline.
+      - name: Compute base SHA (pull requests only)
+        if: ${{ github.event_name == 'pull_request' }}
+        id: base
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          BASE_SHA=$(gh api \
+            "repos/${{ github.repository }}/compare/${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }}" \
+            --jq '.merge_base_commit.sha')
+          echo "base_sha=$BASE_SHA" >> "$GITHUB_OUTPUT"
+
+      - name: Upload snapshots to Sentry
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: stegnet
+        run: |
+          curl -sL https://sentry.io/get-cli/ | SENTRY_CLI_VERSION=3.5.0 sh
+          BASE_SHA="${{ steps.base.outputs.base_sha }}"
+          sentry-cli --log-level=info snapshots upload "$SNAPSHOT_OUTPUT_DIR" \
+            --app-id awaketh-web \
+            --project awaketh-web \
+            ${BASE_SHA:+--base-sha "$BASE_SHA"}
