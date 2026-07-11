@@ -10,7 +10,7 @@
     "snapshots": "playwright test",
     "postinstall": "prisma generate",
     "db:auth": "bunx @better-auth/cli@latest generate --config src/lib/auth.ts -y",
-    "db:generate": "bun x auth@latest generate",
+    "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
     "db:studio": "prisma studio"
