@@ -23,6 +23,7 @@
 # next.js
 /.next/
 /out/
+next-env.d.ts
 
 # production
 /build
@@ -39,16 +40,13 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env.sentry-build-plugin
+.env
 
 # vercel
 .vercel
 
 # typescript
 *.tsbuildinfo
-next-env.d.ts
-
-# Sentry Config File
-.env.sentry-build-plugin
 
 # IDEA IDEs (For whoever uses these lol)
 .idea
