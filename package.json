@@ -1,0 +1,20 @@
+{
+  "name": "awaketh",
+  "version": "0.0.0",
+  "description": "Awaketh is an in-development up and coming engineering alerts app.",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Awaketh/awaketh.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "AGPLv3",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Awaketh/awaketh/issues"
+  },
+  "homepage": "https://github.com/Awaketh/awaketh#readme"
+}
