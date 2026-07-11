@@ -50,3 +50,4 @@ yarn-error.log*
 
 # IDEA IDEs (For whoever uses these lol)
 .idea
+/src/generated/prisma
