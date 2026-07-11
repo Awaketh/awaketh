@@ -3,13 +3,7 @@ name: Visual Snapshots
 on:
   push:
     branches: [main]
-    paths:
-      - "Packages/awaketh-web/**"
-      - ".github/workflows/visual-snapshots.yml"
   pull_request:
-    paths:
-      - "Packages/awaketh-web/**"
-      - ".github/workflows/visual-snapshots.yml"
 
 permissions:
   contents: read
