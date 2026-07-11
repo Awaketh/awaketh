@@ -11,6 +11,9 @@ on:
       - "Packages/awaketh-web/**"
       - ".github/workflows/visual-snapshots.yml"
 
+permissions:
+  contents: read
+
 # Cancel superseded runs on the same ref.
 concurrency:
   group: visual-snapshots-${{ github.ref }}
