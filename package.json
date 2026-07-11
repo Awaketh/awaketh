@@ -1,20 +1,37 @@
 {
-  "name": "awaketh",
-  "version": "0.0.0",
-  "description": "Awaketh is an in-development up and coming engineering alerts app.",
+  "name": "awaketh-web",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "snapshots": "playwright test"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Awaketh/awaketh.git"
+  "dependencies": {
+    "@sentry/nextjs": "^10",
+    "next": "16.2.10",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
   },
-  "keywords": [],
-  "author": "",
-  "license": "AGPLv3",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/Awaketh/awaketh/issues"
+  "devDependencies": {
+    "@playwright/test": "^1.56.0",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.10",
+    "tailwindcss": "^4",
+    "typescript": "^5"
   },
-  "homepage": "https://github.com/Awaketh/awaketh#readme"
+  "ignoreScripts": [
+    "sharp",
+    "unrs-resolver"
+  ],
+  "trustedDependencies": [
+    "sharp",
+    "unrs-resolver"
+  ]
 }
