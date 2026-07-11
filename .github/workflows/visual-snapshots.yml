@@ -13,10 +13,6 @@ concurrency:
   group: visual-snapshots-${{ github.ref }}
   cancel-in-progress: true
 
-defaults:
-  run:
-    working-directory: Packages/awaketh-web
-
 env:
   # Directory the Playwright capture writes to and sentry-cli uploads from.
   SNAPSHOT_OUTPUT_DIR: snapshots
