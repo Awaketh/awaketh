@@ -4,11 +4,21 @@
 
 import * as Sentry from "@sentry/nextjs";
 
-Sentry.init({
-  dsn: process.env.NEXT_PUBLIC_WEB_SENTRY_DSN,
+console.log('Instrumenting Sentry for server-sided monitoring...');
 
-  tracesSampleRate: 1,
+Sentry.init({
+  dsn: process.env.NODE_ENV === "production" ? process.env.NEXT_PUBLIC_SENTRY_DSN : '',
+  spotlight: process.env.NODE_ENV !== "production",
+  integrations: [
+    Sentry.consoleLoggingIntegration({ levels: ['log', 'warn', 'error']}),
+  ],
+
+  tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.25 : 0,
+
   enableLogs: true,
+  attachStacktrace: true,
+
+  release: `awaketh-web@${process.env.NEXT_PUBLIC_APP_VERSION}`,
 
   dataCollection: {
     // To disable sending user data and HTTP bodies, uncomment the lines below. For more info visit:
@@ -17,3 +27,5 @@ Sentry.init({
     // httpBodies: [],
   },
 });
+
+console.log('Sentry server instrumented!');
