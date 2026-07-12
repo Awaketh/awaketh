@@ -6,14 +6,18 @@
     "build": "next build",
     "dev": "next dev",
     "start": "next start",
-    "lint": "eslint",
+    "lint:fix": "eslint --fix .",
+    "lint:validate": "eslint --max-warnings=0 .",
+    "format:fix": "prettier --write .",
+    "format:validate": "prettier --check .",
     "snapshots": "playwright test",
     "postinstall": "prisma generate",
     "db:auth": "bunx @better-auth/cli@latest generate --config src/lib/auth.ts -y",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "prepare": "husky"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
@@ -42,6 +46,8 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.10",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.8",
     "prettier": "^3.9.5",
     "prisma": "^7.8.0",
     "tailwindcss": "^4",
@@ -55,5 +61,9 @@
   "trustedDependencies": [
     "sharp",
     "unrs-resolver"
-  ]
+  ],
+  "lint-staged": {
+    "**/*.{js,jsx,mjs,cjs,ts,tsx}": "eslint --fix --max-warnings=0",
+    "**/*": "prettier --write --ignore-unknown"
+  }
 }
