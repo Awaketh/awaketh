@@ -13,7 +13,6 @@ if (process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_WEB_SENTRY
 
 Sentry.init({
   dsn: process.env.NODE_ENV === 'production' ? process.env.NEXT_PUBLIC_WEB_SENTRY_DSN : '',
-  spotlight: process.env.NODE_ENV !== 'production',
   integrations: [
     Sentry.consoleLoggingIntegration({ levels: ['log', 'warn', 'error']}),
   ],
