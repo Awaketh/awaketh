@@ -1,24 +1,31 @@
-// This file configures the initialization of Sentry on the server.
-// The config you add here will be used whenever the server handles a request.
+// This file configures the initialization of Sentry on the client.
+// The added config here will be used whenever a users loads a page in their browser.
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
 import * as Sentry from "@sentry/nextjs";
 
-console.log('Instrumenting Sentry for server-sided monitoring...');
+console.log('Instrumenting Sentry for client-sided monitoring...');
 
 if (process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_WEB_SENTRY_DSN) {
-  console.warn('NEXT_PUBLIC_WEB_SENTRY_DSN is not set — Sentry server monitoring is disabled.');
+  console.warn('NEXT_PUBLIC_WEB_SENTRY_DSN is not set — Sentry client monitoring is disabled.');
 }
 
 Sentry.init({
   dsn: process.env.NODE_ENV === 'production' ? process.env.NEXT_PUBLIC_WEB_SENTRY_DSN : '',
   spotlight: process.env.NODE_ENV !== 'production',
   integrations: [
+    Sentry.replayIntegration({
+      maskAllText: true,
+      blockAllMedia: true,
+      maskAllInputs: true,
+    }),
     Sentry.consoleLoggingIntegration({ levels: ['log', 'warn', 'error']}),
   ],
 
   tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.25 : 1.0,
-
+  replaysSessionSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
+  replaysOnErrorSampleRate: 1.0,
+  
   enableLogs: true,
   attachStacktrace: true,
 
@@ -33,4 +40,6 @@ Sentry.init({
   },
 });
 
-console.log('Sentry server instrumented!');
+export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
+
+console.log('Sentry client instrumented!');
