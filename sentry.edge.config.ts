@@ -3,18 +3,26 @@
 // Note that this config is unrelated to the Vercel Edge Runtime and is also required when running locally.
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
-import * as Sentry from "@sentry/nextjs";
+import * as Sentry from '@sentry/nextjs';
 
 console.log('Instrumenting Sentry for edge monitoring...');
 
-if (process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_WEB_SENTRY_DSN) {
-  console.warn('NEXT_PUBLIC_WEB_SENTRY_DSN is not set — Sentry edge monitoring is disabled.');
+if (
+  process.env.NODE_ENV === 'production' &&
+  !process.env.NEXT_PUBLIC_WEB_SENTRY_DSN
+) {
+  console.warn(
+    'NEXT_PUBLIC_WEB_SENTRY_DSN is not set — Sentry edge monitoring is disabled.',
+  );
 }
 
 Sentry.init({
-  dsn: process.env.NODE_ENV === 'production' ? process.env.NEXT_PUBLIC_WEB_SENTRY_DSN : '',
+  dsn:
+    process.env.NODE_ENV === 'production'
+      ? process.env.NEXT_PUBLIC_WEB_SENTRY_DSN
+      : '',
   integrations: [
-    Sentry.consoleLoggingIntegration({ levels: ['log', 'warn', 'error']}),
+    Sentry.consoleLoggingIntegration({ levels: ['log', 'warn', 'error'] }),
   ],
 
   tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.25 : 1.0,

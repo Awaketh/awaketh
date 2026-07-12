@@ -2,19 +2,27 @@
 // The config you add here will be used whenever the server handles a request.
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
-import * as Sentry from "@sentry/nextjs";
+import * as Sentry from '@sentry/nextjs';
 
 console.log('Instrumenting Sentry for server-sided monitoring...');
 
-if (process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_WEB_SENTRY_DSN) {
-  console.warn('NEXT_PUBLIC_WEB_SENTRY_DSN is not set — Sentry server monitoring is disabled.');
+if (
+  process.env.NODE_ENV === 'production' &&
+  !process.env.NEXT_PUBLIC_WEB_SENTRY_DSN
+) {
+  console.warn(
+    'NEXT_PUBLIC_WEB_SENTRY_DSN is not set — Sentry server monitoring is disabled.',
+  );
 }
 
 Sentry.init({
-  dsn: process.env.NODE_ENV === 'production' ? process.env.NEXT_PUBLIC_WEB_SENTRY_DSN : '',
+  dsn:
+    process.env.NODE_ENV === 'production'
+      ? process.env.NEXT_PUBLIC_WEB_SENTRY_DSN
+      : '',
   spotlight: process.env.NODE_ENV !== 'production',
   integrations: [
-    Sentry.consoleLoggingIntegration({ levels: ['log', 'warn', 'error']}),
+    Sentry.consoleLoggingIntegration({ levels: ['log', 'warn', 'error'] }),
   ],
 
   tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.25 : 1.0,

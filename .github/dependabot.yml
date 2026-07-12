@@ -4,20 +4,20 @@
 # https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 version: 2
 updates:
-  - package-ecosystem: "docker"
-    directory: "/"
+  - package-ecosystem: 'docker'
+    directory: '/'
     schedule:
       interval: weekly
-  - package-ecosystem: "bun"
-    directory: "/"
+  - package-ecosystem: 'bun'
+    directory: '/'
     schedule:
       interval: weekly
     groups:
       sentry:
         patterns:
-          - "@sentry/*"
+          - '@sentry/*'
 
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "weekly"
+      interval: 'weekly'

@@ -2,16 +2,24 @@
 // The added config here will be used whenever a users loads a page in their browser.
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
-import * as Sentry from "@sentry/nextjs";
+import * as Sentry from '@sentry/nextjs';
 
 console.log('Instrumenting Sentry for client-sided monitoring...');
 
-if (process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_WEB_SENTRY_DSN) {
-  console.warn('NEXT_PUBLIC_WEB_SENTRY_DSN is not set — Sentry client monitoring is disabled.');
+if (
+  process.env.NODE_ENV === 'production' &&
+  !process.env.NEXT_PUBLIC_WEB_SENTRY_DSN
+) {
+  console.warn(
+    'NEXT_PUBLIC_WEB_SENTRY_DSN is not set — Sentry client monitoring is disabled.',
+  );
 }
 
 Sentry.init({
-  dsn: process.env.NODE_ENV === 'production' ? process.env.NEXT_PUBLIC_WEB_SENTRY_DSN : '',
+  dsn:
+    process.env.NODE_ENV === 'production'
+      ? process.env.NEXT_PUBLIC_WEB_SENTRY_DSN
+      : '',
   spotlight: process.env.NODE_ENV !== 'production',
   integrations: [
     Sentry.replayIntegration({
@@ -19,13 +27,13 @@ Sentry.init({
       blockAllMedia: true,
       maskAllInputs: true,
     }),
-    Sentry.consoleLoggingIntegration({ levels: ['log', 'warn', 'error']}),
+    Sentry.consoleLoggingIntegration({ levels: ['log', 'warn', 'error'] }),
   ],
 
   tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.25 : 1.0,
   replaysSessionSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
   replaysOnErrorSampleRate: 1.0,
-  
+
   enableLogs: true,
   attachStacktrace: true,
 
