@@ -6,6 +6,10 @@ import * as Sentry from "@sentry/nextjs";
 
 console.log('Instrumenting Sentry for client-sided monitoring...');
 
+if (process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_WEB_SENTRY_DSN) {
+  console.warn('NEXT_PUBLIC_WEB_SENTRY_DSN is not set — Sentry client monitoring is disabled.');
+}
+
 Sentry.init({
   dsn: process.env.NODE_ENV === 'production' ? process.env.NEXT_PUBLIC_WEB_SENTRY_DSN : '',
   spotlight: process.env.NODE_ENV !== 'production',

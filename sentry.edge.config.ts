@@ -7,6 +7,10 @@ import * as Sentry from "@sentry/nextjs";
 
 console.log('Instrumenting Sentry for edge monitoring...');
 
+if (process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_WEB_SENTRY_DSN) {
+  console.warn('NEXT_PUBLIC_WEB_SENTRY_DSN is not set — Sentry edge monitoring is disabled.');
+}
+
 Sentry.init({
   dsn: process.env.NODE_ENV === 'production' ? process.env.NEXT_PUBLIC_WEB_SENTRY_DSN : '',
   spotlight: process.env.NODE_ENV !== 'production',
@@ -20,6 +24,7 @@ Sentry.init({
   attachStacktrace: true,
 
   release: `awaketh-web@${process.env.NEXT_PUBLIC_APP_VERSION}`,
+  environment: process.env.NODE_ENV,
 
   dataCollection: {
     // To disable sending user data and HTTP bodies, uncomment the lines below. For more info visit:
