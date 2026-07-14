@@ -1,5 +1,15 @@
 {
   "enabledPlugins": {
     "expo@claude-plugins-official": true
+  },
+  "permissions": {
+    "allow": [
+      "Bash(bun run lint:validate)",
+      "Bash(bun run format:validate)",
+      "Bash(bun run typecheck)",
+      "Bash(bun run lint)",
+      "Bash(bunx tsc --noEmit)",
+      "Bash(npm ls *)"
+    ]
   }
 }
