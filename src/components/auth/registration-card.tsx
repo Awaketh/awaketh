@@ -16,6 +16,7 @@ import { Label } from '@/components/ui/label';
 import { authClient } from '@/lib/auth-client';
 import { Turnstile, TurnstileInstance } from '@marsidev/react-turnstile';
 import { sanitizeWord } from '@/lib/auth-functions/name-sanitization';
+import Link from 'next/link';
 
 export function SignUpCard() {
   const tokenRef = useRef<TurnstileInstance | null>(null);
@@ -55,7 +56,9 @@ export function SignUpCard() {
             Get started with your awaketh experience.
           </CardDescription>
           <CardAction>
-            <Button variant="link"> Sign In </Button>
+            <Button variant="outline">
+              <Link href="/auth/sign-in"> Sign In </Link>
+            </Button>
           </CardAction>
         </CardHeader>
         <CardContent>

@@ -15,6 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { authClient } from '@/lib/auth-client';
 import { Turnstile, TurnstileInstance } from '@marsidev/react-turnstile';
+import Link from 'next/link';
 
 export function SignInCard() {
   const tokenRef = useRef<TurnstileInstance | null>(null);
@@ -49,7 +50,9 @@ export function SignInCard() {
             Enter your email below to log into your account.
           </CardDescription>
           <CardAction>
-            <Button variant="link"> Sign up </Button>
+            <Button variant="outline">
+              <Link href="/auth/sign-up"> Sign Up </Link>
+            </Button>
           </CardAction>
         </CardHeader>
         <CardContent>
