@@ -17,7 +17,7 @@ if (
 
 Sentry.init({
   dsn:
-    process.env.NODE_ENV === 'production'
+    process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'test'
       ? process.env.NEXT_PUBLIC_WEB_SENTRY_DSN
       : '',
   spotlight: process.env.NODE_ENV !== 'production',
@@ -30,8 +30,14 @@ Sentry.init({
     Sentry.consoleLoggingIntegration({ levels: ['log', 'warn', 'error'] }),
   ],
 
-  tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.25 : 1.0,
-  replaysSessionSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
+  tracesSampleRate:
+    process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'test'
+      ? 0.25
+      : 1.0,
+  replaysSessionSampleRate:
+    process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'test'
+      ? 0.1
+      : 1.0,
   replaysOnErrorSampleRate: 1.0,
 
   enableLogs: true,
