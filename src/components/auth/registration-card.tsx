@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -16,9 +17,11 @@ import { Label } from '@/components/ui/label';
 import { authClient } from '@/lib/auth-client';
 import { Turnstile, TurnstileInstance } from '@marsidev/react-turnstile';
 import { sanitizeWord } from '@/lib/auth-functions/name-sanitization';
+import { toast } from 'sonner';
 import Link from 'next/link';
 
 export function SignUpCard() {
+  const router = useRouter();
   const tokenRef = useRef<TurnstileInstance | null>(null);
 
   async function onSubmit(event: React.SubmitEvent<HTMLFormElement>) {
@@ -32,7 +35,7 @@ export function SignUpCard() {
     const firstName = formData.get('firstName') as string;
     const lastName = formData.get('lastName') as string;
 
-    const { data, error } = await authClient.signUp.email({
+    const { error } = await authClient.signUp.email({
       name: sanitizeWord(firstName) + ' ' + sanitizeWord(lastName),
       email: email,
       password: password,
@@ -43,8 +46,15 @@ export function SignUpCard() {
       },
     });
 
-    console.log(error);
-    console.log(data);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success(
+      'Account created successfully! Please check your email to verify your account.',
+    );
+
+    router.push('/');
   }
 
   return (
