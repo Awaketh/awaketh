@@ -15,6 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { authClient } from '@/lib/auth-client';
 import { Turnstile, TurnstileInstance } from '@marsidev/react-turnstile';
+import { KeyRound } from 'lucide-react';
 import Link from 'next/link';
 
 export function SignInCard() {
@@ -38,6 +39,15 @@ export function SignInCard() {
       },
     });
 
+    console.log(error);
+  }
+
+  async function onPasskeySignIn() {
+    const { data, error } = await authClient.signIn.passkey({
+      autoFill: false,
+    });
+
+    console.log(data);
     console.log(error);
   }
 
@@ -88,14 +98,21 @@ export function SignInCard() {
           </form>
         </CardContent>
         <CardFooter className="flex-col gap-2">
-          <Button form="login-form" type="submit" className="w-full">
-            Login
-          </Button>
-          <Turnstile
-            className="mt-4"
-            siteKey={process.env.NEXT_PUBLIC_CF_TURNSTILE_SITE_KEY!}
-            ref={tokenRef}
-          />
+          <div>
+            <Button form="login-form" type="submit" className="w-full">
+              Sign In
+            </Button>
+            <Button className="w-full mt-2" onClick={onPasskeySignIn}>
+              <KeyRound data-icon="inline-start" /> Passkey
+            </Button>
+
+            <div className="mt-4">
+              <Turnstile
+                siteKey={process.env.NEXT_PUBLIC_CF_TURNSTILE_SITE_KEY!}
+                ref={tokenRef}
+              />
+            </div>
+          </div>
         </CardFooter>
       </Card>
     </>
