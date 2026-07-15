@@ -66,8 +66,12 @@ export function SignUpCard() {
             Get started with your awaketh experience.
           </CardDescription>
           <CardAction>
-            <Button variant="outline">
-              <Link href="/auth/sign-in"> Sign In </Link>
+            <Button
+              variant="outline"
+              nativeButton={false}
+              render={<Link href="/auth/sign-in" />}
+            >
+              Sign In
             </Button>
           </CardAction>
         </CardHeader>

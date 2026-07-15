@@ -60,8 +60,12 @@ export function SignInCard() {
             Enter your email below to log into your account.
           </CardDescription>
           <CardAction>
-            <Button variant="outline">
-              <Link href="/auth/sign-up"> Sign Up </Link>
+            <Button
+              variant="outline"
+              nativeButton={false}
+              render={<Link href="/auth/sign-up" />}
+            >
+              Sign Up
             </Button>
           </CardAction>
         </CardHeader>
@@ -82,7 +86,7 @@ export function SignInCard() {
                 <Label htmlFor="password">Password</Label>
                 <a
                   href="#"
-                  className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                  className="ml-auto inline-flex min-h-6 items-center text-sm underline-offset-4 hover:underline"
                 >
                   Forgot your password?
                 </a>
