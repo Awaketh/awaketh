@@ -1,9 +1,20 @@
-import { SignInCard } from '@/components/auth/sign-in-card';
+'use client';
 
-export default function Page() {
+import { LoginForm } from '@/components/login-form';
+import { GalleryVerticalEndIcon } from 'lucide-react';
+
+export default function LoginPage() {
   return (
-    <main className="flex flex-col flex-1 items-center justify-center bg-muted font-sans">
-      <SignInCard />
-    </main>
+    <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
+      <div className="flex w-full max-w-sm flex-col gap-6">
+        <a href="#" className="flex items-center gap-2 self-center font-medium">
+          <div className="flex size-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
+            <GalleryVerticalEndIcon className="size-4" />
+          </div>
+          Awaketh
+        </a>
+        <LoginForm />
+      </div>
+    </div>
   );
 }
