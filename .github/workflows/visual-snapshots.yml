@@ -32,6 +32,11 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile --ignore-scripts
 
+      # --ignore-scripts skips the postinstall hook, so generate the Prisma
+      # client explicitly; the build resolves src/generated/prisma from it.
+      - name: Generate Prisma client
+        run: bunx prisma generate
+
       - name: Install Playwright browser
         run: bunx playwright install --with-deps chromium
 
