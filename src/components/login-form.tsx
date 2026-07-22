@@ -70,7 +70,7 @@ export function LoginForm({
         return;
       }
 
-      router.push('/');
+      router.push('/dashboard');
     } finally {
       // Turnstile tokens are single-use, so issue a fresh one for the next attempt.
       tokenRef.current?.reset();
@@ -92,7 +92,7 @@ export function LoginForm({
         return;
       }
 
-      router.push('/');
+      router.push('/dashboard');
     } finally {
       setPending(null);
     }
