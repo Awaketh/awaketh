@@ -1,3 +1,5 @@
+'use client';
+
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {
@@ -17,88 +19,101 @@ import {
 import { Input } from '@/components/ui/input';
 import { SiGoogle } from '@icons-pack/react-simple-icons';
 import { KeyRound } from 'lucide-react';
-import React, { useEffect, useRef } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import React, { useRef, useState } from 'react';
 import { Turnstile, TurnstileInstance } from '@marsidev/react-turnstile';
+import { toast } from 'sonner';
 import { authClient } from '@/lib/auth-client';
+
+type PendingMethod = 'email' | 'passkey' | 'google';
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<'div'>) {
+  const router = useRouter();
   const tokenRef = useRef<TurnstileInstance | null>(null);
-  const oneTapRequested = useRef(false);
-  const { data: session, isPending: sessionPending } = authClient.useSession();
-
-  useEffect(() => {
-    if (sessionPending || session) return;
-    // StrictMode mounts effects twice in dev; One Tap rejects a concurrent prompt.
-    if (oneTapRequested.current) return;
-    oneTapRequested.current = true;
-
-    void (async () => {
-      try {
-        await authClient.oneTap();
-      } catch (error) {
-        console.error('One Tap failed', error);
-      }
-    })();
-
-    // Without this the prompt outlives the component and its FedCM request is
-    // aborted by the next mount instead of dismissed.
-    return () => {
-      window.google?.accounts.id.cancel();
-    };
-  }, [session, sessionPending]);
+  const [pending, setPending] = useState<PendingMethod | null>(null);
 
   async function onSubmit(event: React.SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (pending) return;
 
     const formData = new FormData(event.currentTarget);
 
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
 
-    let captchaToken: string;
+    setPending('email');
     try {
-      captchaToken = await tokenRef.current!.getResponsePromise();
-    } catch {
-      tokenRef.current?.reset();
-      console.error('Captcha check failed');
-      return;
-    }
+      let captchaToken: string;
+      try {
+        captchaToken = await tokenRef.current!.getResponsePromise();
+      } catch {
+        toast.error('Captcha check failed. Please try again.');
+        return;
+      }
 
-    const { error } = await authClient.signIn.email({
-      email: email,
-      password: password,
-      fetchOptions: {
-        headers: {
-          'x-captcha-response': captchaToken,
+      const { error } = await authClient.signIn.email({
+        email: email,
+        password: password,
+        fetchOptions: {
+          headers: {
+            'x-captcha-response': captchaToken,
+          },
         },
-      },
-    });
+      });
 
-    // Turnstile tokens are single-use, so issue a fresh one for the next attempt.
-    tokenRef.current?.reset();
+      if (error) {
+        toast.error(error.message ?? 'Could not sign you in.');
+        return;
+      }
 
-    console.log(error);
+      router.push('/');
+    } finally {
+      // Turnstile tokens are single-use, so issue a fresh one for the next attempt.
+      tokenRef.current?.reset();
+      setPending(null);
+    }
   }
 
   async function onPasskeySignIn() {
-    const { data, error } = await authClient.signIn.passkey({
-      autoFill: false,
-    });
+    if (pending) return;
 
-    console.log(data);
-    console.log(error);
+    setPending('passkey');
+    try {
+      const { error } = await authClient.signIn.passkey({
+        autoFill: false,
+      });
+
+      if (error) {
+        toast.error(error.message ?? 'Passkey sign-in failed.');
+        return;
+      }
+
+      router.push('/');
+    } finally {
+      setPending(null);
+    }
   }
 
   async function onGoogleSignIn() {
+    if (pending) return;
+
+    setPending('google');
+
     const { error } = await authClient.signIn.social({
       provider: 'google',
       callbackURL: '/',
     });
 
-    console.log(error);
+    // A successful call navigates away to Google, so the only path back here
+    // is a failure — leave the button disabled otherwise.
+    if (error) {
+      toast.error(error.message ?? 'Google sign-in failed.');
+      setPending(null);
+    }
   }
 
   return (
@@ -118,6 +133,7 @@ export function LoginForm({
                   variant="outline"
                   type="button"
                   onClick={onGoogleSignIn}
+                  disabled={pending !== null}
                 >
                   <SiGoogle className="size-4" />
                   Login with Google
@@ -126,6 +142,7 @@ export function LoginForm({
                   variant="outline"
                   type="button"
                   onClick={onPasskeySignIn}
+                  disabled={pending !== null}
                 >
                   <KeyRound data-icon="inline-start" /> Login with Passkey
                 </Button>
@@ -139,6 +156,7 @@ export function LoginForm({
                   id="email"
                   name="email"
                   type="email"
+                  autoComplete="email"
                   placeholder="engineering@example.com"
                   required
                 />
@@ -157,12 +175,15 @@ export function LoginForm({
                   id="password"
                   name="password"
                   type="password"
+                  autoComplete="current-password"
                   placeholder="••••••••"
                   required
                 />
               </Field>
               <Field>
-                <Button type="submit">Login</Button>
+                <Button type="submit" disabled={pending !== null}>
+                  {pending === 'email' ? 'Logging in…' : 'Login'}
+                </Button>
                 <Turnstile
                   className="*:mx-auto"
                   siteKey={process.env.NEXT_PUBLIC_CF_TURNSTILE_SITE_KEY!}
@@ -171,7 +192,7 @@ export function LoginForm({
                 />
                 <FieldDescription className="text-center">
                   Don&apos;t have an account?{' '}
-                  <a href="/auth/sign-up">Sign up</a>
+                  <Link href="/auth/sign-up">Sign up</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>

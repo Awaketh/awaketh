@@ -1,7 +1,7 @@
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { prisma } from './database/database';
-import { captcha, oneTap } from 'better-auth/plugins';
+import { captcha } from 'better-auth/plugins';
 import { passkey } from '@better-auth/passkey';
 
 export const auth = betterAuth({
@@ -19,7 +19,6 @@ export const auth = betterAuth({
   },
 
   plugins: [
-    oneTap(),
     captcha({
       provider: 'cloudflare-turnstile',
       secretKey: process.env.CF_TURNSTILE_SECRET_KEY!,
