@@ -1,13 +1,33 @@
 import { withSentryConfig } from '@sentry/nextjs';
 import type { NextConfig } from 'next';
 
-const nextConfig: NextConfig = {/* config options here */};
+const nextConfig: NextConfig = {
+  async redirects() {
+    return [
+      {
+        source: `/legal/terms`,
+        destination: `https://stegnet.com/terms`,
+        permanent: false,
+      },
+      {
+        source: `/legal/privacy`,
+        destination: `https://stegnet.com/privacy`,
+        permanent: false,
+      },
+    ];
+  },
+};
 
 export default withSentryConfig(nextConfig, {
   org: 'stegnet',
   project: 'awaketh-web',
   silent: !process.env.CI,
   widenClientFileUpload: true,
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+
+  sourcemaps: {
+    deleteSourcemapsAfterUpload: true,
+  },
 
   // Uncomment to route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
   // This can increase your server load as well as your hosting bill.

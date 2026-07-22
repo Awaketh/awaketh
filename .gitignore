@@ -40,7 +40,8 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env.sentry-build-plugin
-.env
+.env*
+!.env.example
 
 # vercel
 .vercel
@@ -51,3 +52,4 @@ yarn-error.log*
 # IDEA IDEs (For whoever uses these lol)
 .idea
 /src/generated/prisma
+
