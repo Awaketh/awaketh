@@ -16,10 +16,34 @@ concurrency:
 env:
   # Directory the Playwright capture writes to and sentry-cli uploads from.
   SNAPSHOT_OUTPUT_DIR: snapshots
+  # CI-only database and auth config. prisma.config.ts builds the connection
+  # string from POSTGRES_* at load time, and the app queries the database when
+  # pages behind the session proxy are captured.
+  POSTGRES_USER: ci
+  POSTGRES_PASSWORD: ci
+  POSTGRES_DB: awaketh
+  BETTER_AUTH_URL: http://localhost:3000
+  BETTER_AUTH_SECRET: ci-only-secret-for-visual-snapshots
 
 jobs:
   visual:
     runs-on: blacksmith-4vcpu-ubuntu-2404
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: ci
+          POSTGRES_PASSWORD: ci
+          POSTGRES_DB: awaketh
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ci -d awaketh"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
     steps:
       - uses: actions/checkout@v7
         with:
@@ -36,6 +60,9 @@ jobs:
       # client explicitly; the build resolves src/generated/prisma from it.
       - name: Generate Prisma client
         run: bunx prisma generate
+
+      - name: Apply database migrations
+        run: bunx prisma migrate deploy
 
       - name: Install Playwright browser
         run: bunx playwright install --with-deps chromium
